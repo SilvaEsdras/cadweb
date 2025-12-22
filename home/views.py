@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect # Adicione o redirect
+from django.shortcuts import render, redirect # type: ignore # Adicione o redirect
 from .models import Categoria
 from .forms import CategoriaForm # Importe o formulário
 
