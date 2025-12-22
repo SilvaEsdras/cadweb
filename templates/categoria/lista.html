@@ -3,7 +3,7 @@
 {% block titulo_conteudo %} Listagem de Categoria {% endblock %}
 
 {% block conteudo %}  
-<button onclick="location.href=''"  class="btn btn-primary">Nova Categoria </button>
+<button onclick="location.href='{% url 'form_categoria' %}'" class="btn btn-primary">Nova Categoria</button>
 <button onclick="location.href=''"  class="btn btn-primary">Recarregar </button>
 
 <table style="margin-top:15px" class="table table-bordered table-hover">

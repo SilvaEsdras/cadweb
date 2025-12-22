@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block titulo_conteudo %} Formulário de Categoria {% endblock %}
+
+{% block conteudo %}
+<div class="col-md-6">
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            <label for="id_nome" class="form-label">Nome:</label>
+            {{ form.nome }}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_ordem" class="form-label">Ordem:</label>
+            {{ form.ordem }}
+        </div>
+
+        <button class="btn btn-primary" type="submit">Enviar</button>
+    </form>
+</div>
+{% endblock %}
