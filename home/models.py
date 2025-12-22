@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models # type: ignore
 
 class Categoria(models.Model):
     nome = models.CharField(max_length=100)
