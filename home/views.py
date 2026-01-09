@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib import messages # Importação necessária (Slide 96)
+from django.contrib import messages
 from .models import Categoria
 from .forms import CategoriaForm
 
@@ -17,7 +17,6 @@ def form_categoria(request):
         form = CategoriaForm(request.POST)
         if form.is_valid():
             form.save()
-            # Mensagem de sucesso ao criar (Slide 98)
             messages.success(request, 'Operação realizada com Sucesso')
             return redirect('categoria')
     else:
@@ -32,7 +31,6 @@ def editar_categoria(request, id):
     try:
         categoria = Categoria.objects.get(pk=id)
     except Categoria.DoesNotExist:
-        # Tratamento de erro se o ID não existir (Slide 105)
         messages.error(request, 'Registro não encontrado')
         return redirect('categoria')
     
@@ -40,7 +38,6 @@ def editar_categoria(request, id):
         form = CategoriaForm(request.POST, instance=categoria)
         if form.is_valid():
             form.save()
-            # Mensagem de sucesso ao editar
             messages.success(request, 'Operação realizada com Sucesso')
             return redirect('categoria')
     else:
@@ -54,7 +51,6 @@ def remover_categoria(request, id):
         categoria.delete()
         messages.success(request, 'Registro excluído com sucesso')
     except Categoria.DoesNotExist:
-        # Tratamento de erro ao tentar remover (Slide 108)
         messages.error(request, 'Registro não encontrado')
         
     return redirect('categoria')
