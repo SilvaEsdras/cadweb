@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.contrib import messages # Importação necessária (Slide 96)
 from .models import Categoria
 from .forms import CategoriaForm
 
@@ -16,6 +17,8 @@ def form_categoria(request):
         form = CategoriaForm(request.POST)
         if form.is_valid():
             form.save()
+            # Mensagem de sucesso ao criar (Slide 98)
+            messages.success(request, 'Operação realizada com Sucesso')
             return redirect('categoria')
     else:
         form = CategoriaForm()
@@ -25,28 +28,41 @@ def form_categoria(request):
     }
     return render(request, 'categoria/formulario.html', contexto)
 
-# --- Novas Views (Implementação do Slide) ---
-
 def editar_categoria(request, id):
-    categoria = Categoria.objects.get(pk=id)
+    try:
+        categoria = Categoria.objects.get(pk=id)
+    except Categoria.DoesNotExist:
+        # Tratamento de erro se o ID não existir (Slide 105)
+        messages.error(request, 'Registro não encontrado')
+        return redirect('categoria')
     
     if request.method == 'POST':
-        # Combina os dados do formulário submetido com a instância do objeto existente
         form = CategoriaForm(request.POST, instance=categoria)
         if form.is_valid():
-            form.save() # Salva as alterações
-            return redirect('categoria') # Redireciona para a listagem
+            form.save()
+            # Mensagem de sucesso ao editar
+            messages.success(request, 'Operação realizada com Sucesso')
+            return redirect('categoria')
     else:
-        # Método GET: Preenche o formulário com os dados da instância (para editar)
         form = CategoriaForm(instance=categoria)
         
     return render(request, 'categoria/formulario.html', {'form': form})
 
 def remover_categoria(request, id):
-    categoria = Categoria.objects.get(pk=id)
-    categoria.delete()
+    try:
+        categoria = Categoria.objects.get(pk=id)
+        categoria.delete()
+        messages.success(request, 'Registro excluído com sucesso')
+    except Categoria.DoesNotExist:
+        # Tratamento de erro ao tentar remover (Slide 108)
+        messages.error(request, 'Registro não encontrado')
+        
     return redirect('categoria')
 
 def detalhes_categoria(request, id):
-    categoria = Categoria.objects.get(pk=id)
-    return render(request, 'categoria/detalhes.html', {'item': categoria})
+    try:
+        categoria = Categoria.objects.get(pk=id)
+        return render(request, 'categoria/detalhes.html', {'item': categoria})
+    except Categoria.DoesNotExist:
+        messages.error(request, 'Registro não encontrado')
+        return redirect('categoria')
