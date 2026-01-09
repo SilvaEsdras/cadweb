@@ -7,14 +7,18 @@
     <form method="post">
         {% csrf_token %}
         
+        {{ form.non_field_errors }}
+
         <div class="mb-3">
             <label for="id_nome" class="form-label">Nome:</label>
             {{ form.nome }}
+            {{ form.nome.errors }}
         </div>
 
         <div class="mb-3">
             <label for="id_ordem" class="form-label">Ordem:</label>
             {{ form.ordem }}
+            {{ form.ordem.errors }}
         </div>
 
         <button class="btn btn-primary" type="submit">Enviar</button>
