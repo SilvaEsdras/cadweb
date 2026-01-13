@@ -7,7 +7,6 @@ class Categoria(models.Model):
     def __str__(self):
         return self.nome
 
-# --- Adicionado: Model Cliente ---
 class Cliente(models.Model):
     nome = models.CharField(max_length=100)
     cpf = models.CharField(max_length=15, verbose_name="C.P.F")
@@ -16,10 +15,19 @@ class Cliente(models.Model):
     def __str__(self):
         return self.nome
     
-    # Slide 131: Propriedade personalizada para formatar a data
     @property
     def datanascimento(self):
         """Retorna a data de nascimento no formato DD/MM/AAAA"""
         if self.datanasc:
             return self.datanasc.strftime('%d/%m/%Y')
         return None
+
+# --- Novo Model Produto (Slide 171) ---
+class Produto(models.Model):
+    nome = models.CharField(max_length=100)
+    preco = models.DecimalField(max_digits=10, decimal_places=2, blank=False)
+    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
+    img_base64 = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.nome

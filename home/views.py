@@ -1,15 +1,14 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import Categoria, Cliente
-from .forms import CategoriaForm, ClienteForm
+from .models import Categoria, Cliente, Produto
+from .forms import CategoriaForm, ClienteForm, ProdutoForm
 
 def index(request):
     return render(request, 'index.html')
 
+# --- VIEWS CATEGORIA ---
 def categoria(request):
-    contexto = {
-        'lista': Categoria.objects.all().order_by('-id'),
-    }
+    contexto = {'lista': Categoria.objects.all().order_by('-id')}
     return render(request, 'categoria/lista.html', contexto)
 
 def form_categoria(request):
@@ -21,11 +20,7 @@ def form_categoria(request):
             return redirect('categoria')
     else:
         form = CategoriaForm()
-
-    contexto = {
-        'form': form,
-    }
-    return render(request, 'categoria/formulario.html', contexto)
+    return render(request, 'categoria/formulario.html', {'form': form})
 
 def editar_categoria(request, id):
     try:
@@ -42,7 +37,6 @@ def editar_categoria(request, id):
             return redirect('categoria')
     else:
         form = CategoriaForm(instance=categoria)
-        
     return render(request, 'categoria/formulario.html', {'form': form})
 
 def remover_categoria(request, id):
@@ -52,7 +46,6 @@ def remover_categoria(request, id):
         messages.success(request, 'Registro excluído com sucesso')
     except Categoria.DoesNotExist:
         messages.error(request, 'Registro não encontrado')
-        
     return redirect('categoria')
 
 def detalhes_categoria(request, id):
@@ -62,11 +55,10 @@ def detalhes_categoria(request, id):
     except Categoria.DoesNotExist:
         messages.error(request, 'Registro não encontrado')
         return redirect('categoria')
-    
+
+# --- VIEWS CLIENTE ---
 def cliente(request):
-    contexto = {
-        'lista': Cliente.objects.all().order_by('-id'),
-    }
+    contexto = {'lista': Cliente.objects.all().order_by('-id')}
     return render(request, 'cliente/lista.html', contexto)
 
 def form_cliente(request):
@@ -78,9 +70,7 @@ def form_cliente(request):
             return redirect('cliente')
     else:
         form = ClienteForm()
-    
-    contexto = {'form': form}
-    return render(request, 'cliente/formulario.html', contexto)
+    return render(request, 'cliente/formulario.html', {'form': form})
 
 def editar_cliente(request, id):
     try:
@@ -97,7 +87,6 @@ def editar_cliente(request, id):
             return redirect('cliente')
     else:
         form = ClienteForm(instance=cliente)
-
     return render(request, 'cliente/formulario.html', {'form': form})
 
 def remover_cliente(request, id):
@@ -116,3 +105,53 @@ def detalhes_cliente(request, id):
     except Cliente.DoesNotExist:
         messages.error(request, 'Registro não encontrado')
         return redirect('cliente')
+
+# --- VIEWS PRODUTO (Novas) ---
+def produto(request):
+    contexto = {'lista': Produto.objects.all().order_by('-id')}
+    return render(request, 'produto/lista.html', contexto)
+
+def form_produto(request):
+    if request.method == 'POST':
+        form = ProdutoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Operação realizada com Sucesso')
+            return redirect('produto')
+    else:
+        form = ProdutoForm()
+    return render(request, 'produto/form.html', {'form': form})
+
+def editar_produto(request, id):
+    try:
+        produto = Produto.objects.get(pk=id)
+    except Produto.DoesNotExist:
+        messages.error(request, 'Registro não encontrado')
+        return redirect('produto')
+
+    if request.method == 'POST':
+        form = ProdutoForm(request.POST, instance=produto)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Operação realizada com Sucesso')
+            return redirect('produto')
+    else:
+        form = ProdutoForm(instance=produto)
+    return render(request, 'produto/form.html', {'form': form})
+
+def remover_produto(request, id):
+    try:
+        produto = Produto.objects.get(pk=id)
+        produto.delete()
+        messages.success(request, 'Registro excluído com sucesso')
+    except Produto.DoesNotExist:
+        messages.error(request, 'Registro não encontrado')
+    return redirect('produto')
+
+def detalhes_produto(request, id):
+    try:
+        produto = Produto.objects.get(pk=id)
+        return render(request, 'produto/detalhes.html', {'item': produto})
+    except Produto.DoesNotExist:
+        messages.error(request, 'Registro não encontrado')
+        return redirect('produto')
