@@ -21,8 +21,8 @@
                 <input type="text" class="form-control" value="{{ item.ordem }}" disabled>
             </div>
 
-            <button onclick="location.href='{% url 'categoria' %}'" class="btn btn-secondary">Voltar</button>
-            <button onclick="location.href='{% url 'editar_categoria' item.id %}'" class="btn btn-warning">Editar</button>
+            <a href="{% url 'categoria' %}" class="btn btn-secondary">Voltar</a>
+            <a href="{% url 'editar_categoria' item.id %}" class="btn btn-warning">Editar</a>
         </div>
     </div>
 </div>

@@ -3,8 +3,8 @@
 {% block titulo_conteudo %} Listagem de Categoria {% endblock %}
 
 {% block conteudo %}  
-<button onclick="location.href='{% url 'form_categoria' %}'" class="btn btn-primary">Nova Categoria</button>
-<button onclick="location.href='{% url 'categoria' %}'"  class="btn btn-primary">Recarregar </button>
+<a href="{% url 'form_categoria' %}" class="btn btn-primary">Nova Categoria</a>
+<a href="{% url 'categoria' %}" class="btn btn-primary">Recarregar</a>
 
 <table style="margin-top:15px" class="table table-bordered table-hover">
     <thead class="thead-dark">
@@ -23,8 +23,8 @@
             <td> {{item.nome}} </td>
             <td> {{item.ordem}} </td>
             <td> 
-                <button onclick="location='{% url 'detalhes_categoria' item.id %}'" class="btn btn-info">Detalhes </button>
-                <button onclick="location='{% url 'editar_categoria' item.id %}'"  class="btn btn-warning">Alterar </button>
+                <a href="{% url 'detalhes_categoria' item.id %}" class="btn btn-info">Detalhes</a>
+                <a href="{% url 'editar_categoria' item.id %}" class="btn btn-warning">Alterar</a>
                 
                 <a href="{% url 'remover_categoria' item.id %}" class="btn btn-danger" 
                 onclick="return confirm('Tem certeza que deseja remover este registro?');">Excluir</a>

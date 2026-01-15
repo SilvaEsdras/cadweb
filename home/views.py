@@ -165,8 +165,6 @@ def ajustar_estoque(request, id):
         if form.is_valid():
             estoque = form.save()
             messages.success(request, 'Estoque atualizado com sucesso')
-            # O slide sugere renderizar a lista apenas com o item alterado, 
-            # mas para manter a consistência com o resto do sistema, redirecionamos para a lista completa.
             return redirect('produto') 
     else:
          form = EstoqueForm(instance=estoque)

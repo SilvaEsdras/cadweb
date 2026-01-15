@@ -39,7 +39,6 @@ class ClienteForm(forms.ModelForm):
              raise forms.ValidationError("A data de nascimento não pode ser maior que a data atual.")
         return datanasc
 
-# --- Novo Form Produto (Slide 179) ---
 class ProdutoForm(forms.ModelForm):
     class Meta:
         model = Produto
@@ -64,7 +63,7 @@ class ProdutoForm(forms.ModelForm):
         self.fields['preco'].localize = True
         self.fields['preco'].widget.is_localized = True
 
-# --- Novo Form Estoque (Slide 14 - Imagem 8) ---
+
 class EstoqueForm(forms.ModelForm):
     class Meta:
         model = Estoque
