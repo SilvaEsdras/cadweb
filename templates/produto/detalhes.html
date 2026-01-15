@@ -7,41 +7,39 @@
     <div class="card">
         <div class="card-body">
             <div class="mb-3">
+                <label class="form-label fw-bold">ID:</label>
+                <span class="form-control">{{ item.id }}</span>
+            </div>
+
+            <div class="mb-3">
                 <label class="form-label fw-bold">Nome:</label>
-                <input type="text" class="form-control" value="{{ item.nome }}" disabled>
+                <span class="form-control">{{ item.nome }}</span>
             </div>
             
             <div class="mb-3">
-                <label class="form-label fw-bold">Preço:</label>
-                <input type="text" class="form-control" value="{{ item.preco }}" disabled>
+                <label class="form-label fw-bold">Preço R$:</label>
+                <span class="form-control">{{ item.preco }}</span>
             </div>
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Categoria:</label>
-                <input type="text" class="form-control" value="{{ item.categoria }}" disabled>
+                <span class="form-control">{{ item.categoria }}</span>
             </div>
 
             {% if item.img_base64 %}
-            <div class="mb-3 text-center">
+            <div class="mb-3">
                 <label class="form-label fw-bold d-block">Imagem:</label>
-                <canvas id="detalhesCanvas" width="200" height="200" style="border:1px solid #ddd; border-radius: 5px;"></canvas>
+                <div class="form-control text-center" style="height: auto;">
+                    <img src="{{ item.img_base64 }}" width="200" height="200" style="object-fit: contain;">
+                </div>
             </div>
             {% endif %}
 
-            <button onclick="location.href='{% url 'produto' %}'" class="btn btn-secondary">Voltar</button>
-            <button onclick="location.href='{% url 'editar_produto' item.id %}'" class="btn btn-warning">Editar</button>
+            <div class="mt-3">
+                <a href="{% url 'produto' %}" class="btn btn-secondary">Voltar</a>
+                <a href="{% url 'editar_produto' item.id %}" class="btn btn-warning">Editar</a>
+            </div>
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block javascript %}
-<script>
-    $(document).ready(function() {
-        var imgBase64 = "{{ item.img_base64 }}";
-        if (imgBase64) {
-            loadImage(imgBase64, 'detalhesCanvas');
-        }
-    });
-</script>
 {% endblock %}

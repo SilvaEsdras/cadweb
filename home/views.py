@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import Categoria, Cliente, Produto
-from .forms import CategoriaForm, ClienteForm, ProdutoForm
+from .models import Categoria, Cliente, Produto, Estoque # Importe Estoque
+from .forms import CategoriaForm, ClienteForm, ProdutoForm, EstoqueForm # Importe EstoqueForm
 
 def index(request):
     return render(request, 'index.html')
@@ -155,3 +155,20 @@ def detalhes_produto(request, id):
     except Produto.DoesNotExist:
         messages.error(request, 'Registro não encontrado')
         return redirect('produto')
+
+def ajustar_estoque(request, id):
+    produto = Produto.objects.get(pk=id)
+    estoque = produto.estoque # acessa a property criada no model
+    
+    if request.method == 'POST':
+        form = EstoqueForm(request.POST, instance=estoque)
+        if form.is_valid():
+            estoque = form.save()
+            messages.success(request, 'Estoque atualizado com sucesso')
+            # O slide sugere renderizar a lista apenas com o item alterado, 
+            # mas para manter a consistência com o resto do sistema, redirecionamos para a lista completa.
+            return redirect('produto') 
+    else:
+         form = EstoqueForm(instance=estoque)
+         
+    return render(request, 'produto/estoque.html', {'form': form})

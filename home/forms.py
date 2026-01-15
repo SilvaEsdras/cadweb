@@ -1,5 +1,5 @@
 from django import forms
-from .models import Categoria, Cliente, Produto
+from .models import Categoria, Cliente, Produto, Estoque
 from datetime import date
 
 class CategoriaForm(forms.ModelForm):
@@ -48,7 +48,6 @@ class ProdutoForm(forms.ModelForm):
             'categoria': forms.Select(attrs={'class': 'form-control'}),
             'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome'}),
             'img_base64': forms.HiddenInput(),
-            # A classe 'money' ativa a máscara jQuery no frontend
             'preco': forms.TextInput(attrs={
                 'class': 'money form-control',
                 'maxlength': 500,
@@ -64,3 +63,14 @@ class ProdutoForm(forms.ModelForm):
         super(ProdutoForm, self).__init__(*args, **kwargs)
         self.fields['preco'].localize = True
         self.fields['preco'].widget.is_localized = True
+
+# --- Novo Form Estoque (Slide 14 - Imagem 8) ---
+class EstoqueForm(forms.ModelForm):
+    class Meta:
+        model = Estoque
+        fields = ['produto', 'qtde']
+        
+        widgets = {
+            'produto': forms.HiddenInput(),  # Campo oculto para armazenar o ID do produto
+            'qtde': forms.TextInput(attrs={'class': 'inteiro form-control'}),
+        }
