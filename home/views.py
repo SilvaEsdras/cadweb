@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import Categoria, Cliente, Produto, Estoque # Importe Estoque
-from .forms import CategoriaForm, ClienteForm, ProdutoForm, EstoqueForm # Importe EstoqueForm
+from .models import Categoria, Cliente, Produto, Estoque 
+from .forms import CategoriaForm, ClienteForm, ProdutoForm, EstoqueForm 
+from django.http import JsonResponse
+from django.apps import apps
 
 def index(request):
     return render(request, 'index.html')
@@ -170,3 +172,26 @@ def ajustar_estoque(request, id):
          form = EstoqueForm(instance=estoque)
          
     return render(request, 'produto/estoque.html', {'form': form})
+
+def teste1(request):
+    return render(request, 'testes/teste1.html')
+
+def teste2(request):
+    return render(request, 'testes/teste2.html')
+
+def buscar_dados(request, app_modelo):
+    termo = request.GET.get('q', '') # pega o termo digitado
+    try:
+        # Divida o app e o modelo (ex: home.Categoria)
+        app, modelo = app_modelo.split('.')
+        modelo = apps.get_model(app, modelo)
+    except LookupError:
+        return JsonResponse({'error': 'Modelo não encontrado'}, status=404)
+    
+    # Verifica se o modelo possui os campos 'nome' e 'id'
+    if not hasattr(modelo, 'nome') or not hasattr(modelo, 'id'):
+        return JsonResponse({'error': 'Modelo deve ter campos "id" e "nome"'}, status=400)
+    
+    resultados = modelo.objects.filter(nome__icontains=termo)
+    dados = [{'id': obj.id, 'nome': obj.nome} for obj in resultados]
+    return JsonResponse(dados, safe=False)
