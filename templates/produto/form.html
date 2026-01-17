@@ -2,14 +2,14 @@
 
 {% block titulo_conteudo %} Formulário de Produtos {% endblock titulo_conteudo %}
 
-{% block conteudo %} 
+{% block conteudo %}
 <form method="post">
-    {% csrf_token %}    
-    
+    {% csrf_token %}
+
     {{ form.non_field_errors }}
 
     {% for hidden in form.hidden_fields %}
-        {{ hidden }}
+    {{ hidden }}
     {% endfor %}
 
     <div class="mb-3">
@@ -26,22 +26,15 @@
 
     <div class="mb-3">
         <label for="id_categoria_nome">Categoria:</label>
-        <input type="text" 
-            value="{{ form.instance.categoria }}" 
-            class="form-control autocomplete" 
-            id="id_categoria_nome" 
-            data-url="{% url 'buscar_dados' 'home.Categoria' %}" 
-            data-hidden="#id_categoria" 
+        <input type="text" value="{{ form.instance.categoria }}" class="form-control autocomplete"
+            id="id_categoria_nome" data-url="{% url 'buscar_dados' 'home.Categoria' %}" data-hidden="#id_categoria"
             placeholder="Digite para buscar uma categoria...">
     </div>
-    
+
 
     <fieldset class="fieldset mb-3">
         <label for="imagem">Imagem:</label>
-        <input type="file" id="imagem" 
-            name="imagem" 
-            data-hidden="img_base64" 
-            class="img_upload form-control" 
+        <input type="file" id="imagem" name="imagem" data-hidden="img_base64" class="img_upload form-control"
             accept="image/*"><br>
 
         <canvas class="canvas" id="imageCanvas" width="200" height="200"></canvas>
@@ -54,33 +47,33 @@
 
 {% block javascript %}
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
 
         // Inicializa a imagem no canvas se já existir
-        $('.img_init').each(function() {
+        $('.img_init').each(function () {
             const initialImageBase64 = $(this).val();
             const target_canvas = $(this).data('canvas');
             if (initialImageBase64) {
-                loadImage(initialImageBase64,target_canvas);
+                loadImage(initialImageBase64, target_canvas);
             }
         });
-        
+
         // Upload e conversão para Base64
-        $('.img_upload').on('change', function(event) {
-            const imagemInput = this.files[0]; 
+        $('.img_upload').on('change', function (event) {
+            const imagemInput = this.files[0];
             var hidden = $(this).data('hidden');
             if (imagemInput) {
                 const reader = new FileReader();
-                reader.readAsDataURL(imagemInput); 
+                reader.readAsDataURL(imagemInput);
 
-                reader.onload = function() {
+                reader.onload = function () {
                     const imgBase64 = reader.result;
-                    $('#'+hidden).val(imgBase64); 
-                    var canvasTarget = $('#'+hidden).data('canvas'); 
-                    loadImage(imgBase64,canvasTarget);
+                    $('#' + hidden).val(imgBase64);
+                    var canvasTarget = $('#' + hidden).data('canvas');
+                    loadImage(imgBase64, canvasTarget);
                 };
 
-                reader.onerror = function(error) {
+                reader.onerror = function (error) {
                     console.log('Erro ao converter a imagem: ', error);
                 };
             }

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block titulo_conteudo %} Novo Pedido {% endblock titulo_conteudo %}
+
+{% block conteudo %}
+
+<form method="post">
+    {% csrf_token %}
+
+    <p>
+        <label class="fw-bold">Cliente:</label>
+        <span class="form-control">{{ form.instance.cliente.nome }}</span>
+    </p>
+
+    <p>
+        <label class="fw-bold">Data:</label>
+        <span class="form-control">{{ data_atual|date:"d/m/Y H:i" }}</span>
+    </p>
+
+    <p>
+        <label class="fw-bold">Status:</label>
+        <span class="form-control">{{ form.instance.get_status_display }}</span>
+    </p>
+
+    {{ form.as_p }}
+
+    <button class="btn btn-primary btn-sm" type="submit">Salvar</button>
+    <a href="{% url 'cliente' %}" class="btn btn-secondary btn-sm">Cancelar</a>
+</form>
+
+{% endblock conteudo %}

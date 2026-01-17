@@ -2,7 +2,7 @@
 
 {% block titulo_conteudo %} Ajuste de Estoque {% endblock titulo_conteudo %}
 
-{% block conteudo %} 
+{% block conteudo %}
 <div class="col-md-6">
     <div class="card card-custom">
         <div class="card-body card-body-custom">
@@ -10,10 +10,10 @@
                 <label class="fw-bold">Produto:</label> <br>
                 <span class="form-control" disabled>{{ form.instance.produto.nome }}</span>
             </p>
-            
+
             <form method="post">
-                {% csrf_token %}    
-                
+                {% csrf_token %}
+
                 <div class="mb-3">
                     <label for="id_qtde" class="form-label">Quantidade:</label>
                     {{ form.qtde }}

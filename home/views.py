@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import Categoria, Cliente, Produto, Estoque 
-from .forms import CategoriaForm, ClienteForm, ProdutoForm, EstoqueForm 
+from .models import Categoria, Cliente, Produto, Estoque, Pedido
+from .forms import CategoriaForm, ClienteForm, ProdutoForm, EstoqueForm , PedidoForm
 from django.http import JsonResponse
 from django.apps import apps
 
@@ -195,3 +195,26 @@ def buscar_dados(request, app_modelo):
     resultados = modelo.objects.filter(nome__icontains=termo)
     dados = [{'id': obj.id, 'nome': obj.nome} for obj in resultados]
     return JsonResponse(dados, safe=False)
+
+def pedido(request):
+    lista = Pedido.objects.all().order_by('-id')
+    return render(request, 'pedido/lista.html', {'lista': lista})
+
+def novo_pedido(request, id):
+    if request.method == 'GET':
+        try:
+            cliente = Cliente.objects.get(pk=id)
+        except Cliente.DoesNotExist:
+            messages.error(request, 'Registro não encontrado')
+            return redirect('cliente')
+        
+        # Cria uma instância de pedido com o cliente selecionado (sem salvar no banco ainda)
+        pedido = Pedido(cliente=cliente)
+        form = PedidoForm(instance=pedido)
+        return render(request, 'pedido/form.html', {'form': form})
+    else:
+        form = PedidoForm(request.POST)
+        if form.is_valid():
+            pedido = form.save()
+            messages.success(request, 'Pedido criado com sucesso!')
+            return redirect('pedido')

@@ -2,7 +2,7 @@
 
 {% block titulo_conteudo %} Listagem de Categoria {% endblock %}
 
-{% block conteudo %}  
+{% block conteudo %}
 <a href="{% url 'form_categoria' %}" class="btn btn-primary">Nova Categoria</a>
 <a href="{% url 'categoria' %}" class="btn btn-primary">Recarregar</a>
 
@@ -12,25 +12,25 @@
             <th scope="col">ID</th>
             <th scope="col">Descrição</th>
             <th scope="col">Ordem</th>
-            <th scope="col">Ações</th>  
+            <th scope="col">Ações</th>
         </tr>
     </thead>
-    
+
     <tbody>
         {% for item in lista %}
         <tr>
             <td>{{item.id}}</td>
             <td> {{item.nome}} </td>
             <td> {{item.ordem}} </td>
-            <td> 
+            <td>
                 <a href="{% url 'detalhes_categoria' item.id %}" class="btn btn-info">Detalhes</a>
                 <a href="{% url 'editar_categoria' item.id %}" class="btn btn-warning">Alterar</a>
-                
-                <a href="{% url 'remover_categoria' item.id %}" class="btn btn-danger" 
-                onclick="return confirm('Tem certeza que deseja remover este registro?');">Excluir</a>
-            </td> 
+
+                <a href="{% url 'remover_categoria' item.id %}" class="btn btn-danger"
+                    onclick="return confirm('Tem certeza que deseja remover este registro?');">Excluir</a>
+            </td>
         </tr>
         {% endfor %}
-     </tbody>
+    </tbody>
 </table>
 {% endblock %}

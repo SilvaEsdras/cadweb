@@ -1,5 +1,5 @@
 from django import forms
-from .models import Categoria, Cliente, Produto, Estoque
+from .models import Categoria, Cliente, Produto, Estoque, Pedido
 from datetime import date
 
 class CategoriaForm(forms.ModelForm):
@@ -72,4 +72,12 @@ class EstoqueForm(forms.ModelForm):
         widgets = {
             'produto': forms.HiddenInput(),  # Campo oculto para armazenar o ID do produto
             'qtde': forms.TextInput(attrs={'class': 'inteiro form-control'}),
+        }
+
+class PedidoForm(forms.ModelForm):
+    class Meta:
+        model = Pedido
+        fields = ['cliente']
+        widgets = {
+            'cliente': forms.HiddenInput(),  # Campo oculto para armazenar o ID do cliente
         }
