@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import Categoria, Cliente, Produto, Estoque, Pedido
-from .forms import CategoriaForm, ClienteForm, ProdutoForm, EstoqueForm , PedidoForm
 from django.http import JsonResponse
 from django.apps import apps
+from .models import Categoria, Cliente, Produto, Estoque, Pedido, ItemPedido
+from .forms import CategoriaForm, ClienteForm, ProdutoForm, EstoqueForm, PedidoForm, ItemPedidoForm
 
 def index(request):
     return render(request, 'index.html')
@@ -108,7 +108,7 @@ def detalhes_cliente(request, id):
         messages.error(request, 'Registro não encontrado')
         return redirect('cliente')
 
-# --- VIEWS PRODUTO (Novas) ---
+# --- VIEWS PRODUTO ---
 def produto(request):
     contexto = {'lista': Produto.objects.all().order_by('-id')}
     return render(request, 'produto/lista.html', contexto)
@@ -173,6 +173,7 @@ def ajustar_estoque(request, id):
          
     return render(request, 'produto/estoque.html', {'form': form})
 
+# --- VIEWS TESTES / AUTOCOMPLETE ---
 def teste1(request):
     return render(request, 'testes/teste1.html')
 
@@ -196,6 +197,7 @@ def buscar_dados(request, app_modelo):
     dados = [{'id': obj.id, 'nome': obj.nome} for obj in resultados]
     return JsonResponse(dados, safe=False)
 
+# --- VIEWS PEDIDO ---
 def pedido(request):
     lista = Pedido.objects.all().order_by('-id')
     return render(request, 'pedido/lista.html', {'lista': lista})
@@ -218,3 +220,23 @@ def novo_pedido(request, id):
             pedido = form.save()
             messages.success(request, 'Pedido criado com sucesso!')
             return redirect('pedido')
+
+def detalhes_pedido(request, id):
+    try:
+        pedido = Pedido.objects.get(pk=id)
+    except Pedido.DoesNotExist:
+        messages.error(request, 'Registro não encontrado')
+        return redirect('pedido')
+    
+    if request.method == 'GET':
+        itemPedido = ItemPedido(pedido=pedido)
+        form = ItemPedidoForm(instance=itemPedido)
+    else:
+        form = ItemPedidoForm(request.POST)
+        # O salvamento do item (POST) será implementado na próxima etapa
+    
+    contexto = {
+        'pedido': pedido,
+        'form': form,
+    }
+    return render(request, 'pedido/detalhes.html', contexto)
