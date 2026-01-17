@@ -25,11 +25,13 @@ urlpatterns = [
     path('produto/remover/<int:id>/', views.remover_produto, name='remover_produto'),
     path('produto/detalhes/<int:id>/', views.detalhes_produto, name='detalhes_produto'),
     path('produto/ajustar_estoque/<int:id>/', views.ajustar_estoque, name='ajustar_estoque'),
+
+    # Rotas de Testes (Se não tiver essas, o menu vai quebrar!)
     path('teste1/', views.teste1, name='teste1'),
     path('teste2/', views.teste2, name='teste2'),
     path('buscar_dados/<str:app_modelo>/', views.buscar_dados, name='buscar_dados'),
 
-    # Rotas de Pedido 
+    # Rotas Pedido (Se não tiver essas, o menu vai quebrar!)
     path('pedido/', views.pedido, name='pedido'),
     path('pedido/form/<int:id>', views.novo_pedido, name='novo_pedido'),
 ]
