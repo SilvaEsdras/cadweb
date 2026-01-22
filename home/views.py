@@ -322,3 +322,22 @@ def remover_item_pedido(request, id):
     messages.success(request, 'Item removido e estoque estornado.')
 
     return redirect('detalhes_pedido', id=pedido_id)
+
+def remover_pedido(request, id):
+    try:
+        pedido = Pedido.objects.get(pk=id)
+        
+        # --- Lógica de Estorno de Estoque ---
+        # Antes de deletar o pedido, percorremos seus itens
+        for item in pedido.itempedido_set.all():
+            estoque = item.produto.estoque
+            estoque.qtde += item.qtde # Devolve a quantidade
+            estoque.save()
+
+        pedido.delete() # Agora exclui o pedido (e os itens em cascata)
+        messages.success(request, 'Pedido excluído e estoque estornado com sucesso')
+        
+    except Pedido.DoesNotExist:
+        messages.error(request, 'Registro não encontrado')
+        
+    return redirect('pedido')
