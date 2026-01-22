@@ -33,7 +33,6 @@ class Produto(models.Model):
  
     @property
     def estoque(self):
-        # Tenta buscar o estoque, se não existir, cria um novo com qtde 0
         estoque_item, flag_created = Estoque.objects.get_or_create(produto=self, defaults={'qtde': 0})
         return estoque_item
 
@@ -68,10 +67,21 @@ class Pedido(models.Model):
 
     @property
     def data_pedidof(self):
-        """Formata a data do pedido"""
         if self.data_pedido:
             return self.data_pedido.strftime('%d/%m/%Y %H:%M')
         return None
+
+
+    @property
+    def total(self):
+        """Calcula o total de todos os itens no pedido"""
+        # Soma o total de cada item (qtde * preco)
+        return sum(item.qtde * item.preco for item in self.itempedido_set.all())
+
+    @property
+    def qtdeItens(self):
+        """Conta a quantidade de itens distintos no pedido"""
+        return self.itempedido_set.count()
 
 class ItemPedido(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
@@ -81,3 +91,8 @@ class ItemPedido(models.Model):
 
     def __str__(self):
         return f"{self.produto.nome} (Qtd: {self.qtde}) - Preço Unitário: {self.preco}"
+
+
+    @property
+    def total(self):
+        return self.qtde * self.preco
