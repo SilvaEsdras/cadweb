@@ -46,7 +46,16 @@ class ProdutoForm(forms.ModelForm):
         widgets = {
             'categoria': forms.HiddenInput(),
             'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome'}),
-            'img_base64': forms.HiddenInput(),
+            
+            # --- CORREÇÃO AQUI ---
+            # Adicionamos attrs para incluir o ID, a classe img_init e o data-canvas
+            'img_base64': forms.HiddenInput(attrs={
+                'id': 'img_base64', 
+                'class': 'img_init', 
+                'data-canvas': 'imageCanvas'
+            }),
+            # ---------------------
+
             'preco': forms.TextInput(attrs={
                 'class': 'money form-control',
                 'maxlength': 500,
