@@ -28,14 +28,14 @@
         <td>{{ pedido.data_pedidof }}</td>
         <td>{{ pedido.get_status_display }}</td>
         
-        <td>{{ pedido.qtdeItens }}</td>  
-        <td>{{ pedido.total }}</td>      
+        <td>{{ pedido.qtdeItens }}</td>
+        <td>{{ pedido.total }}</td>
         
         <td>
           <a href="{% url 'detalhes_pedido' pedido.id %}" class="btn btn-primary btn-sm">Detalhes</a>
           
           <a href="{% url 'remover_pedido' pedido.id %}" class="btn btn-danger btn-sm" 
-            onclick="return confirm('Tem certeza que deseja remover este registro?');">Remover</a>
+          onclick="return confirm('Tem certeza que deseja remover este registro?');">Remover</a>
         </td>
       </tr>
       {% endfor %}
