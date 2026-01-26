@@ -21,6 +21,7 @@
     <div class="sidebar" id="sidebar">
         <div class="text-center text-white mb-3">
             <h3>Cad Web</h3>
+            <p class="small">{{ data_atual|date:"d/m/Y" }}</p>
         </div>
         {% include 'menu.html' %}
     </div>
@@ -40,6 +41,15 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#"><i class="fas fa-user-circle"></i></a>
+                        </li>
+                        <li class="nav-item">
+                            <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="nav-link btn btn-link" title="Sair"
+                                    style="border: none; background: none;">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                </button>
+                            </form>
                         </li>
                     </ul>
                 </div>

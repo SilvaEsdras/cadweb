@@ -2,17 +2,21 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.http import JsonResponse
 from django.apps import apps
+from django.contrib.auth.decorators import login_required
 from .models import Categoria, Cliente, Produto, Estoque, Pedido, ItemPedido
 from .forms import CategoriaForm, ClienteForm, ProdutoForm, EstoqueForm, PedidoForm, ItemPedidoForm
 
+@login_required
 def index(request):
     return render(request, 'index.html')
 
 # --- VIEWS CATEGORIA ---
+@login_required
 def categoria(request):
     contexto = {'lista': Categoria.objects.all().order_by('-id')}
     return render(request, 'categoria/lista.html', contexto)
 
+@login_required
 def form_categoria(request):
     if request.method == 'POST':
         form = CategoriaForm(request.POST)
@@ -24,6 +28,7 @@ def form_categoria(request):
         form = CategoriaForm()
     return render(request, 'categoria/formulario.html', {'form': form})
 
+@login_required
 def editar_categoria(request, id):
     try:
         categoria = Categoria.objects.get(pk=id)
@@ -41,6 +46,7 @@ def editar_categoria(request, id):
         form = CategoriaForm(instance=categoria)
     return render(request, 'categoria/formulario.html', {'form': form})
 
+@login_required
 def remover_categoria(request, id):
     try:
         categoria = Categoria.objects.get(pk=id)
@@ -50,6 +56,7 @@ def remover_categoria(request, id):
         messages.error(request, 'Registro não encontrado')
     return redirect('categoria')
 
+@login_required
 def detalhes_categoria(request, id):
     try:
         categoria = Categoria.objects.get(pk=id)
@@ -59,10 +66,12 @@ def detalhes_categoria(request, id):
         return redirect('categoria')
 
 # --- VIEWS CLIENTE ---
+@login_required
 def cliente(request):
     contexto = {'lista': Cliente.objects.all().order_by('-id')}
     return render(request, 'cliente/lista.html', contexto)
 
+@login_required
 def form_cliente(request):
     if request.method == 'POST':
         form = ClienteForm(request.POST)
@@ -74,6 +83,7 @@ def form_cliente(request):
         form = ClienteForm()
     return render(request, 'cliente/formulario.html', {'form': form})
 
+@login_required
 def editar_cliente(request, id):
     try:
         cliente = Cliente.objects.get(pk=id)
@@ -91,6 +101,7 @@ def editar_cliente(request, id):
         form = ClienteForm(instance=cliente)
     return render(request, 'cliente/formulario.html', {'form': form})
 
+@login_required
 def remover_cliente(request, id):
     try:
         cliente = Cliente.objects.get(pk=id)
@@ -100,6 +111,7 @@ def remover_cliente(request, id):
         messages.error(request, 'Registro não encontrado')
     return redirect('cliente')
 
+@login_required
 def detalhes_cliente(request, id):
     try:
         cliente = Cliente.objects.get(pk=id)
@@ -109,10 +121,12 @@ def detalhes_cliente(request, id):
         return redirect('cliente')
 
 # --- VIEWS PRODUTO ---
+@login_required
 def produto(request):
     contexto = {'lista': Produto.objects.all().order_by('-id')}
     return render(request, 'produto/lista.html', contexto)
 
+@login_required
 def form_produto(request):
     if request.method == 'POST':
         form = ProdutoForm(request.POST)
@@ -124,6 +138,7 @@ def form_produto(request):
         form = ProdutoForm()
     return render(request, 'produto/form.html', {'form': form})
 
+@login_required
 def editar_produto(request, id):
     try:
         produto = Produto.objects.get(pk=id)
@@ -141,6 +156,7 @@ def editar_produto(request, id):
         form = ProdutoForm(instance=produto)
     return render(request, 'produto/form.html', {'form': form})
 
+@login_required
 def remover_produto(request, id):
     try:
         produto = Produto.objects.get(pk=id)
@@ -150,6 +166,7 @@ def remover_produto(request, id):
         messages.error(request, 'Registro não encontrado')
     return redirect('produto')
 
+@login_required
 def detalhes_produto(request, id):
     try:
         produto = Produto.objects.get(pk=id)
@@ -158,6 +175,7 @@ def detalhes_produto(request, id):
         messages.error(request, 'Registro não encontrado')
         return redirect('produto')
 
+@login_required
 def ajustar_estoque(request, id):
     produto = Produto.objects.get(pk=id)
     estoque = produto.estoque # acessa a property criada no model
@@ -174,12 +192,15 @@ def ajustar_estoque(request, id):
     return render(request, 'produto/estoque.html', {'form': form})
 
 # --- VIEWS TESTES / AUTOCOMPLETE ---
+@login_required
 def teste1(request):
     return render(request, 'testes/teste1.html')
 
+@login_required
 def teste2(request):
     return render(request, 'testes/teste2.html')
 
+@login_required
 def buscar_dados(request, app_modelo):
     termo = request.GET.get('q', '') # pega o termo digitado
     try:
@@ -198,10 +219,12 @@ def buscar_dados(request, app_modelo):
     return JsonResponse(dados, safe=False)
 
 # --- VIEWS PEDIDO ---
+@login_required
 def pedido(request):
     lista = Pedido.objects.all().order_by('-id')
     return render(request, 'pedido/lista.html', {'lista': lista})
 
+@login_required
 def novo_pedido(request, id):
     if request.method == 'GET':
         try:
@@ -221,6 +244,7 @@ def novo_pedido(request, id):
             messages.success(request, 'Pedido criado com sucesso!')
             return redirect('pedido')
 
+@login_required
 def detalhes_pedido(request, id):
     try:
         pedido = Pedido.objects.get(pk=id)
@@ -260,6 +284,7 @@ def detalhes_pedido(request, id):
     }
     return render(request, 'pedido/detalhes.html', contexto)
 
+@login_required
 def editar_item_pedido(request, id):
     try:
         item_pedido = ItemPedido.objects.get(pk=id)
@@ -303,6 +328,7 @@ def editar_item_pedido(request, id):
     }
     return render(request, 'pedido/detalhes.html', contexto)
 
+@login_required
 def remover_item_pedido(request, id):
     try:
         item_pedido = ItemPedido.objects.get(pk=id)
@@ -323,6 +349,7 @@ def remover_item_pedido(request, id):
 
     return redirect('detalhes_pedido', id=pedido_id)
 
+@login_required
 def remover_pedido(request, id):
     try:
         pedido = Pedido.objects.get(pk=id)
