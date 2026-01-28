@@ -1,4 +1,5 @@
 from django.db import models
+import random # Necessário para a chave de acesso
 
 class Categoria(models.Model):
     nome = models.CharField(max_length=100)
@@ -66,23 +67,66 @@ class Pedido(models.Model):
 
     @property
     def data_pedidof(self):
-        """Formata a data do pedido"""
         if self.data_pedido:
             return self.data_pedido.strftime('%d/%m/%Y %H:%M')
         return None
 
-    # --- CÁLCULO DO TOTAL DO PEDIDO ---
     @property
     def total(self):
         """Soma o total de todos os itens do pedido"""
         return sum(item.qtde * item.preco for item in self.itempedido_set.all())
 
-    # --- CONTAGEM DE ITENS ---
     @property
     def qtdeItens(self):
         return self.itempedido_set.count()
 
+    # --- NOVAS PROPRIEDADES DE PAGAMENTO (Slide 19) ---
+    @property
+    def pagamentos(self):
+        return self.pagamento_set.all()
+
+    @property
+    def total_pago(self):
+        return sum(p.valor for p in self.pagamentos)
+
+    @property
+    def debito(self):
+        return self.total - self.total_pago
+
+    # --- PROPRIEDADES PARA NOTA FISCAL (Desafio Slide 19) ---
+    @property
+    def icms(self): # Alíquota 18%
+        return self.total * 0.18
+
+    @property
+    def ipi(self): # Alíquota 4%
+        return self.total * 0.04
+
+    @property
+    def pis(self): # Alíquota 1.65%
+        return self.total * 0.0165
+    
+    @property
+    def cofins(self): # Alíquota 7.6%
+        return self.total * 0.076
+
+    @property
+    def total_impostos(self):
+        return self.icms + self.ipi + self.pis + self.cofins
+
+    @property
+    def total_com_impostos(self):
+        return self.total + self.total_impostos
+
+    @property
+    def chave_acesso(self):
+        # Gera uma chave aleatória baseada no ID e Data
+        ts = int(self.data_pedido.timestamp()) if self.data_pedido else 0
+        rand = random.randint(1000, 9999)
+        return f"3523{self.id:04d}591{ts}{rand}55001000000001" # Formato fictício de DANFE
+
 class ItemPedido(models.Model):
+    # ... (Mantenha o código existente) ...
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
     produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
     qtde = models.PositiveIntegerField()
@@ -91,7 +135,31 @@ class ItemPedido(models.Model):
     def __str__(self):
         return f"{self.produto.nome} (Qtd: {self.qtde}) - Preço Unitário: {self.preco}"
 
-    # --- CÁLCULO DO TOTAL DO ITEM ---
     @property
     def total(self):
         return self.qtde * self.preco
+
+# --- NOVO MODELO PAGAMENTO (Slide 19) ---
+class Pagamento(models.Model):
+    DINHEIRO = 1
+    CARTAO = 2
+    PIX = 3
+    OUTRA = 4
+
+    FORMA_CHOICES = [
+        (DINHEIRO, 'Dinheiro'),
+        (CARTAO, 'Cartão'),
+        (PIX, 'Pix'),
+        (OUTRA, 'Outra'),
+    ]
+
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
+    forma = models.IntegerField(choices=FORMA_CHOICES)
+    valor = models.DecimalField(max_digits=10, decimal_places=2, blank=False)
+    data_pgto = models.DateTimeField(auto_now_add=True)
+    
+    @property
+    def data_pgtof(self):
+        if self.data_pgto:
+            return self.data_pgto.strftime('%d/%m/%Y %H:%M')
+        return None

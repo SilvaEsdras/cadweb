@@ -1,5 +1,5 @@
 from django import forms
-from .models import Categoria, Cliente, Produto, Estoque, Pedido, ItemPedido
+from .models import Categoria, Cliente, Produto, Estoque, Pedido, ItemPedido, Pagamento # Importe Pagamento
 from datetime import date
 
 class CategoriaForm(forms.ModelForm):
@@ -101,3 +101,28 @@ class ItemPedidoForm(forms.ModelForm):
             'produto': forms.HiddenInput(),
             'qtde': forms.TextInput(attrs={'class': 'form-control', 'type': 'number'}),
         }
+
+class PagamentoForm(forms.ModelForm):
+    class Meta:
+        model = Pagamento
+        fields = ['pedido','forma','valor']
+        widgets = {
+            'pedido': forms.HiddenInput(),
+            'forma': forms.Select(attrs={'class': 'form-control'}),  
+            'valor': forms.TextInput(attrs={
+                'class': 'money form-control',
+                'maxlength': 500,
+                'placeholder': '0.000,00'
+            }),
+         }
+        
+    def __init__(self, *args, **kwargs):
+        super(PagamentoForm, self).__init__(*args, **kwargs)
+        self.fields['valor'].localize = True
+        self.fields['valor'].widget.is_localized = True
+
+    def clean_valor(self):
+        valor = self.cleaned_data.get('valor')
+        if valor and valor <= 0:
+            raise forms.ValidationError("O valor deve ser maior que zero.")
+        return valor

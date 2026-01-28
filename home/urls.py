@@ -38,4 +38,7 @@ urlpatterns = [
     path('pedido/editar_item/<int:id>/', views.editar_item_pedido, name='editar_item_pedido'),
     path('pedido/remover_item/<int:id>/', views.remover_item_pedido, name='remover_item_pedido'),
     path('pedido/remover/<int:id>/', views.remover_pedido, name='remover_pedido'),
+    path('pedido/pagamento/<int:id>/', views.form_pagamento, name='form_pagamento'),
+    path('pedido/nota_fiscal/<int:id>/', views.nota_fiscal, name='nota_fiscal'),
+    path('pedido/pagamento/remover/<int:id>/', views.remover_pagamento, name='remover_pagamento'),
 ]

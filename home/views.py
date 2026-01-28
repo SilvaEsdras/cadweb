@@ -3,8 +3,8 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.apps import apps
 from django.contrib.auth.decorators import login_required
-from .models import Categoria, Cliente, Produto, Estoque, Pedido, ItemPedido
-from .forms import CategoriaForm, ClienteForm, ProdutoForm, EstoqueForm, PedidoForm, ItemPedidoForm
+from .models import Categoria, Cliente, Produto, Estoque, Pedido, ItemPedido, Pagamento
+from .forms import CategoriaForm, ClienteForm, ProdutoForm, EstoqueForm, PedidoForm, ItemPedidoForm, PagamentoForm
 
 @login_required
 def index(request):
@@ -368,3 +368,51 @@ def remover_pedido(request, id):
         messages.error(request, 'Registro não encontrado')
         
     return redirect('pedido')
+
+@login_required
+def form_pagamento(request, id):
+    try:
+        pedido = Pedido.objects.get(pk=id)
+    except Pedido.DoesNotExist:
+        messages.error(request, 'Registro não encontrado')
+        return redirect('pedido')
+    
+    if request.method == 'POST':
+        form = PagamentoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Pagamento registrado com sucesso')
+            # Redireciona para a mesma página para atualizar a lista
+            return redirect('form_pagamento', id=pedido.id)
+            
+    # Prepara o formulário para um novo pagamento
+    pagamento = Pagamento(pedido=pedido)
+    form = PagamentoForm(instance=pagamento)
+    
+    contexto = {
+        'pedido': pedido,
+        'form': form,
+    }    
+    return render(request, 'pedido/pagamento.html', contexto)
+
+@login_required
+def nota_fiscal(request, id):
+    try:
+        pedido = Pedido.objects.get(pk=id)
+    except Pedido.DoesNotExist:
+        messages.error(request, 'Registro não encontrado')
+        return redirect('pedido')
+        
+    return render(request, 'pedido/nota_fiscal.html', {'pedido': pedido})
+
+@login_required
+def remover_pagamento(request, id):
+    try:
+        pagamento = Pagamento.objects.get(pk=id)
+        pedido_id = pagamento.pedido.id # Salva o ID do pedido antes de deletar
+        pagamento.delete()
+        messages.success(request, 'Pagamento removido com sucesso')
+        return redirect('form_pagamento', id=pedido_id) # Retorna para a lista de pagamentos
+    except Pagamento.DoesNotExist:
+        messages.error(request, 'Registro não encontrado')
+        return redirect('pedido')

@@ -44,16 +44,13 @@
     {{ form.pedido }}
     
     <div class="mt-3">
-        <button type="submit" class="btn btn-primary btn-sm">
-            {% if editando %}Atualizar Item{% else %}Salvar Produto{% endif %}
-        </button>
+        <button type="submit" class="btn btn-primary btn-sm">Salvar Produto</button>
         
-        {% if editando %}
-            <a href="{% url 'detalhes_pedido' pedido.id %}" class="btn btn-secondary btn-sm">Cancelar Edição</a>
-        {% else %}
-            <button type="button" class="btn btn-secondary btn-sm">Registrar Pagamento</button>
-            <a href="{% url 'pedido' %}" class="btn btn-secondary btn-sm">Voltar</a>
-        {% endif %}
+        <a href="{% url 'form_pagamento' pedido.id %}" class="btn btn-success btn-sm">Registrar Pagamento</a>
+        
+        <a href="{% url 'nota_fiscal' pedido.id %}" target="_blank" class="btn btn-info btn-sm">Nota Fiscal</a>
+        
+        <a href="{% url 'pedido' %}" class="btn btn-secondary btn-sm">Voltar</a>
     </div>
 </form>
 
