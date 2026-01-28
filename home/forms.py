@@ -102,20 +102,22 @@ class ItemPedidoForm(forms.ModelForm):
             'qtde': forms.TextInput(attrs={'class': 'form-control', 'type': 'number'}),
         }
 
+# home/forms.py
+
 class PagamentoForm(forms.ModelForm):
     class Meta:
         model = Pagamento
-        fields = ['pedido','forma','valor']
+        fields = ['pedido', 'forma', 'valor']
         widgets = {
             'pedido': forms.HiddenInput(),
-            'forma': forms.Select(attrs={'class': 'form-control'}),  
+            'forma': forms.Select(attrs={'class': 'form-control'}),
             'valor': forms.TextInput(attrs={
                 'class': 'money form-control',
                 'maxlength': 500,
                 'placeholder': '0.000,00'
             }),
-         }
-        
+        }
+
     def __init__(self, *args, **kwargs):
         super(PagamentoForm, self).__init__(*args, **kwargs)
         self.fields['valor'].localize = True
@@ -123,6 +125,26 @@ class PagamentoForm(forms.ModelForm):
 
     def clean_valor(self):
         valor = self.cleaned_data.get('valor')
+        pedido = self.cleaned_data.get('pedido')
+
+        # 1. Validação: Valor deve ser positivo
         if valor and valor <= 0:
             raise forms.ValidationError("O valor deve ser maior que zero.")
+
+        # 2. Validação: Valor não pode ser maior que o débito
+        if pedido and valor:
+            debito_atual = pedido.debito
+
+            # Caso esteja EDITANDO um pagamento existente:
+            # O débito atual no banco já considera esse pagamento subtraído.
+            # Precisamos somar o valor antigo de volta para saber o "espaço" real disponível.
+            if self.instance.pk:
+                debito_atual += self.instance.valor
+
+            # Compara o valor digitado com o débito permitido
+            if valor > debito_atual:
+                raise forms.ValidationError(
+                    f"O valor (R$ {valor}) é maior que o débito restante (R$ {debito_atual})."
+                )
+
         return valor
