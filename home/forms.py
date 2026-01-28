@@ -127,24 +127,20 @@ class PagamentoForm(forms.ModelForm):
         valor = self.cleaned_data.get('valor')
         pedido = self.cleaned_data.get('pedido')
 
-        # 1. Validação: Valor deve ser positivo
         if valor and valor <= 0:
             raise forms.ValidationError("O valor deve ser maior que zero.")
 
-        # 2. Validação: Valor não pode ser maior que o débito
         if pedido and valor:
             debito_atual = pedido.debito
 
-            # Caso esteja EDITANDO um pagamento existente:
-            # O débito atual no banco já considera esse pagamento subtraído.
-            # Precisamos somar o valor antigo de volta para saber o "espaço" real disponível.
+            # Se estiver editando, devolve o valor atual ao débito para recalcular o limite real
             if self.instance.pk:
                 debito_atual += self.instance.valor
 
-            # Compara o valor digitado com o débito permitido
             if valor > debito_atual:
+                # Mensagem elaborada explicando o motivo do bloqueio
                 raise forms.ValidationError(
-                    f"O valor (R$ {valor}) é maior que o débito restante (R$ {debito_atual})."
+                    f"Operação não permitida: O valor informado (R$ {valor:,.2f}) excede o saldo devedor atual do pedido (R$ {debito_atual:,.2f})."
                 )
 
         return valor

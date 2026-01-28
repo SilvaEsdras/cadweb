@@ -369,6 +369,8 @@ def remover_pedido(request, id):
         
     return redirect('pedido')
 
+# --- VIEWS PAGAMENTO E NOTA FISCAL ---
+
 @login_required
 def form_pagamento(request, id):
     try:
@@ -381,19 +383,29 @@ def form_pagamento(request, id):
         form = PagamentoForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Pagamento registrado com sucesso')
-            # Redireciona para a mesma página para atualizar a lista
-            return redirect('form_pagamento', id=pedido.id)
-            
+            messages.success(request, 'Operação realizada com Sucesso')
+            return redirect('form_pagamento', id=id) # Redirect to self to show list
+    
     # Prepara o formulário para um novo pagamento
     pagamento = Pagamento(pedido=pedido)
     form = PagamentoForm(instance=pagamento)
-    
     contexto = {
         'pedido': pedido,
         'form': form,
     }    
     return render(request, 'pedido/pagamento.html', contexto)
+
+@login_required
+def remover_pagamento(request, id):
+    try:
+        pagamento = Pagamento.objects.get(pk=id)
+        pedido_id = pagamento.pedido.id
+        pagamento.delete()
+        messages.success(request, 'Pagamento removido com sucesso')
+        return redirect('form_pagamento', id=pedido_id)
+    except Pagamento.DoesNotExist:
+        messages.error(request, 'Registro não encontrado')
+        return redirect('pedido')
 
 @login_required
 def nota_fiscal(request, id):
@@ -402,17 +414,4 @@ def nota_fiscal(request, id):
     except Pedido.DoesNotExist:
         messages.error(request, 'Registro não encontrado')
         return redirect('pedido')
-        
     return render(request, 'pedido/nota_fiscal.html', {'pedido': pedido})
-
-@login_required
-def remover_pagamento(request, id):
-    try:
-        pagamento = Pagamento.objects.get(pk=id)
-        pedido_id = pagamento.pedido.id # Salva o ID do pedido antes de deletar
-        pagamento.delete()
-        messages.success(request, 'Pagamento removido com sucesso')
-        return redirect('form_pagamento', id=pedido_id) # Retorna para a lista de pagamentos
-    except Pagamento.DoesNotExist:
-        messages.error(request, 'Registro não encontrado')
-        return redirect('pedido')
