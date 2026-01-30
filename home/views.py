@@ -384,11 +384,26 @@ def form_pagamento(request, id):
         if form.is_valid():
             form.save()
             messages.success(request, 'Operação realizada com Sucesso')
-            return redirect('form_pagamento', id=id) # Redirect to self to show list
+            return redirect('form_pagamento', id=id)
+        else:
+            messages.error(request, 'Erro ao registrar pagamento. Verifique os valores informados.')
     
-    # Prepara o formulário para um novo pagamento
-    pagamento = Pagamento(pedido=pedido)
-    form = PagamentoForm(instance=pagamento)
+    if request.method == 'GET':
+        pagamento = Pagamento(pedido=pedido)
+        form = PagamentoForm(instance=pagamento)
+    
+    pagamento_instance = Pagamento(pedido=pedido)
+    if request.method == 'POST':
+        form = PagamentoForm(request.POST, instance=pagamento_instance)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Operação realizada com Sucesso')
+            return redirect('form_pagamento', id=id)
+        else:
+            messages.error(request, 'Erro: O valor do pagamento excede o débito ou é inválido.')
+    else:
+        form = PagamentoForm(instance=pagamento_instance)
+
     contexto = {
         'pedido': pedido,
         'form': form,
