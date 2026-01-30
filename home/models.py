@@ -1,5 +1,6 @@
 from django.db import models
 import random # Necessário para a chave de acesso
+from decimal import Decimal 
 
 class Categoria(models.Model):
     nome = models.CharField(max_length=100)
@@ -80,7 +81,7 @@ class Pedido(models.Model):
     def qtdeItens(self):
         return self.itempedido_set.count()
 
-    # --- NOVAS PROPRIEDADES DE PAGAMENTO (Slide 19) ---
+    # --- NOVAS PROPRIEDADES DE PAGAMENTO  ---
     @property
     def pagamentos(self):
         return self.pagamento_set.all()
@@ -93,31 +94,6 @@ class Pedido(models.Model):
     def debito(self):
         return self.total - self.total_pago
 
-    # --- PROPRIEDADES PARA NOTA FISCAL (Desafio Slide 19) ---
-    @property
-    def icms(self): # Alíquota 18%
-        return self.total * 0.18
-
-    @property
-    def ipi(self): # Alíquota 4%
-        return self.total * 0.04
-
-    @property
-    def pis(self): # Alíquota 1.65%
-        return self.total * 0.0165
-    
-    @property
-    def cofins(self): # Alíquota 7.6%
-        return self.total * 0.076
-
-    @property
-    def total_impostos(self):
-        return self.icms + self.ipi + self.pis + self.cofins
-
-    @property
-    def total_com_impostos(self):
-        return self.total + self.total_impostos
-
     @property
     def chave_acesso(self):
         # Gera uma chave aleatória baseada no ID e Data
@@ -126,7 +102,6 @@ class Pedido(models.Model):
         return f"3523{self.id:04d}591{ts}{rand}55001000000001" # Formato fictício de DANFE
 
 class ItemPedido(models.Model):
-    # ... (Mantenha o código existente) ...
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
     produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
     qtde = models.PositiveIntegerField()
@@ -139,7 +114,7 @@ class ItemPedido(models.Model):
     def total(self):
         return self.qtde * self.preco
 
-# --- NOVO MODELO PAGAMENTO (Slide 19) ---
+# --- NOVO MODELO PAGAMENTO  ---
 class Pagamento(models.Model):
     DINHEIRO = 1
     CARTAO = 2
