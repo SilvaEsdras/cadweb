@@ -63,6 +63,31 @@ class Pedido(models.Model):
     data_pedido = models.DateTimeField(auto_now_add=True)
     status = models.IntegerField(choices=STATUS_CHOICES, default=NOVO)
 
+    @property
+    def icms(self): 
+        return self.total * Decimal('0.18')
+
+    @property
+    def ipi(self): 
+        return self.total * Decimal('0.04')
+
+    @property
+    def pis(self): 
+        return self.total * Decimal('0.0165')
+    
+    @property
+    def cofins(self): 
+        return self.total * Decimal('0.076')
+
+    @property
+    def total_impostos(self):
+        # Soma todos os impostos calculados acima
+        return self.icms + self.ipi + self.pis + self.cofins
+
+    @property
+    def total_com_impostos(self):
+        return self.total + self.total_impostos
+
     def __str__(self):
         return f"Pedido {self.id} - Cliente: {self.cliente.nome} - Status: {self.get_status_display()}"
 
